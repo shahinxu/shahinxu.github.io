@@ -67,3 +67,30 @@ a:hover {
 a.btn {
   border-radius: 999px;
 }
+
+.journey-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem;
+  margin: 1.5rem 0 2rem;
+}
+
+.journey-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.06);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+.journey-card h3 {
+  margin-top: 0;
+  margin-bottom: 0.35rem;
+  font-size: $type-size-4;
+}
+
+.journey-card-meta {
+  margin: 0;
+  font-size: $type-size-6;
+  color: $gray;
+}
