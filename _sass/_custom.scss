@@ -46,9 +46,9 @@ body {
 }
 
 .sidebar {
-  background-color: $background-color;
-  border-radius: 14px;
-  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+  background-color: transparent;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .page__inner-wrap {
