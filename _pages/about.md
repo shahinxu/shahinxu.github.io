@@ -44,6 +44,9 @@ My work currently focuses on large language models and Mixture of Experts (MoE),
             {% if pub.venue %}
               <p class="home-pub-venue">{{ pub.venue }}</p>
             {% endif %}
+            {% if pub.citation %}
+              <p class="home-pub-citation">{{ pub.citation }}</p>
+            {% endif %}
           </div>
         </div>
       {% endfor %}
