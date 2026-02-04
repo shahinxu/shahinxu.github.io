@@ -39,13 +39,22 @@ My work currently focuses on large language models and Mixture of Experts (MoE),
       {% assign authors = pub.authors %}
       {% assign authors = authors | replace: 'Zhen Xu', '**Zhen Xu**' %}
       {% assign authors = authors | replace: 'Xu, Z.', '**Xu, Z.**' %}
-      <p class="home-pub-authors">{{ authors | markdownify | remove: '<p>' | remove: '</p>' | strip }}</p>
+      <p class="home-pub-line">{{ authors | markdownify | remove: '<p>' | remove: '</p>' | strip }}</p>
       {% endif %}
-      {% if pub.venue %}
-      <p class="home-pub-venue">{{ pub.venue }}</p>
+      <p class="home-pub-line">
+        {% if pub.venue %}{{ pub.venue }}{% endif %}
+        {% if pub.venue and pub.date %}&nbsp;·&nbsp;{% endif %}
+        {% if pub.date %}{{ pub.date | date: "%Y" }}{% endif %}
+      </p>
+      {% if pub.paperurl or pub.slidesurl %}
+      <p class="home-pub-line">
+        {% if pub.paperurl %}<a href="{{ pub.paperurl }}">Paper</a>{% endif %}
+        {% if pub.paperurl and pub.slidesurl %} &nbsp;|&nbsp; {% endif %}
+        {% if pub.slidesurl %}<a href="{{ pub.slidesurl }}">Slides</a>{% endif %}
+      </p>
       {% endif %}
-      {% if pub.citation %}
-      <p class="home-pub-citation">{{ pub.citation }}</p>
+      {% if pub.excerpt %}
+      <p class="home-pub-summary">{{ pub.excerpt }}</p>
       {% endif %}
     </div>
   </div>
