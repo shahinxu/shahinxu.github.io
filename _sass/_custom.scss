@@ -104,17 +104,18 @@ a.btn {
 .home-pub-item {
   display: flex;
   gap: 1rem;
-  align-items: flex-start;
+  align-items: stretch;
 }
 .home-pub-thumb {
   flex: 0 0 30%;
   max-width: 30%;
+  overflow: hidden;
 }
 
 .home-pub-thumb img {
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
   object-fit: cover;
   border-radius: 8px;
 }
