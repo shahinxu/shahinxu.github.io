@@ -32,9 +32,7 @@ My work currently focuses on large language models and Mixture of Experts (MoE),
     </div>
     {% endif %}
     <div class="home-pub-content">
-      <p class="home-pub-title">
-        <a href="{{ pub.url | relative_url }}">{{ pub.title }}</a>
-      </p>
+      <p class="home-pub-title">{{ pub.title }}</p>
       {% if pub.authors %}
       {% assign authors = pub.authors %}
       {% assign authors = authors | replace: 'Zhen Xu', '**Zhen Xu**' %}
@@ -42,7 +40,7 @@ My work currently focuses on large language models and Mixture of Experts (MoE),
       <p class="home-pub-line">{{ authors | markdownify | remove: '<p>' | remove: '</p>' | strip }}</p>
       {% endif %}
       <p class="home-pub-line">
-        {% if pub.venue %}{{ pub.venue }}{% endif %}
+        {% if pub.venue %}<i>{{ pub.venue }}</i>{% endif %}
         {% if pub.venue and pub.date %}&nbsp;·&nbsp;{% endif %}
         {% if pub.date %}{{ pub.date | date: "%Y" }}{% endif %}
       </p>
