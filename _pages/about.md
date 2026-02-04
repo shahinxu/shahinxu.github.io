@@ -39,7 +39,7 @@ My work currently focuses on large language models and Mixture of Experts (MoE),
               {% assign authors = pub.authors %}
               {% assign authors = authors | replace: 'Zhen Xu', '**Zhen Xu**' %}
               {% assign authors = authors | replace: 'Xu, Z.', '**Xu, Z.**' %}
-              <p class="home-pub-authors">{{ authors | markdownify | strip }}</p>
+              <p class="home-pub-authors">{{ authors | markdownify | remove: '<p>' | remove: '</p>' | strip }}</p>
             {% endif %}
             {% if pub.venue %}
               <p class="home-pub-venue">{{ pub.venue }}</p>
