@@ -5,5 +5,5 @@ category: conferences
 date: 2025-12-01
 venue: "under-review"
 authors: "Xinyu Zhao, Rana Shahroz, Zhen Xu, Zhen Tan, Tianlong Chen"
-thumbnail: "/publications/Reviewer.pdf"
+thumbnail: "/publications/Reviewer.png"
 ---
