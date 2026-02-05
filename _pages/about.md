@@ -13,7 +13,7 @@ My work currently focuses on large language models and Mixture of Experts (MoE),
 
 ---
 
-## Publications
+<p class="home-pubs-title">Publications</p>
 
 {% include base_path %}
 
