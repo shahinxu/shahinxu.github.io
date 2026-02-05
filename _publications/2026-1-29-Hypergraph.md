@@ -4,6 +4,6 @@ collection: publications
 category: conferences
 date: 2026-01-29
 venue: "under-review"
-authors: "Sukwon Yun*, Zhen Xu*, Ren Wang, Jun Wen, Quan Sun, Song Wang, Can Chen, Tianlong Chen"
+authors: "Sukwon Yun\*, Zhen Xu\*, Ren Wang, Jun Wen, Quan Sun, Song Wang, Can Chen, Tianlong Chen"
 thumbnail: "/publications/Hypergraph.png"
 ---
