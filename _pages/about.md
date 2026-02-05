@@ -13,7 +13,7 @@ My work currently focuses on large language models and Mixture of Experts (MoE),
 
 ---
 
-<p class="home-pubs-title">Publications</p>
+<h1 class="page__title">Publications</h1>
 
 {% include base_path %}
 
