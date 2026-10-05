@@ -1,0 +1,376 @@
+<title>PhysioWorld</title>
+  <meta name="description" content="PhysioWorld isolates an intervention's effect with a second forward pass and projects it onto pharmacologically admissible signs, making ICU world models robust to shifts in dosing practice.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Noto+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #1f2328;
+      --muted: #5b6570;
+      --line: #e3e7ec;
+      --panel: #f6f8fa;
+      --accent: #315a7d;
+      --accent-soft: #eaf2f8;
+      --ours: #c2185b;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: "Noto Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: #ffffff;
+      line-height: 1.65;
+      font-size: 17px;
+    }
+    a { color: var(--accent); }
+    .wrap { max-width: 960px; margin: 0 auto; padding: 0 20px; }
+    .narrow { max-width: 820px; margin: 0 auto; }
+
+    /* ---------- hero ---------- */
+    header.hero { padding: 56px 0 24px; text-align: center; }
+    .venue { font-family: "Google Sans", sans-serif; color: var(--muted); letter-spacing: .04em; font-size: 15px; margin-bottom: 14px; }
+    h1 {
+      font-family: "Google Sans", sans-serif;
+      font-weight: 700;
+      font-size: clamp(28px, 4.4vw, 42px);
+      line-height: 1.2;
+      margin: 0 auto 22px;
+      max-width: 880px;
+    }
+    h1 .name { color: var(--accent); }
+    .authors { font-family: "Google Sans", sans-serif; font-size: 19px; margin-bottom: 6px; }
+    .authors span { white-space: nowrap; margin: 0 8px; }
+    .affils { color: var(--muted); font-size: 16px; }
+    .affils span { white-space: nowrap; margin: 0 10px; }
+    .note { color: var(--muted); font-size: 14px; margin-top: 4px; }
+    .buttons { margin-top: 24px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: #363636; color: #fff; text-decoration: none;
+      font-family: "Google Sans", sans-serif; font-size: 16px;
+      padding: 9px 20px; border-radius: 999px;
+    }
+    .btn:hover { background: #1f1f1f; }
+    .btn.disabled { background: #b8bec5; cursor: default; }
+    .btn svg { width: 18px; height: 18px; fill: currentColor; }
+
+    /* ---------- sections ---------- */
+    section { padding: 34px 0; }
+    section + section { border-top: 1px solid var(--line); }
+    h2 {
+      font-family: "Google Sans", sans-serif; font-weight: 700;
+      font-size: 28px; text-align: center; margin: 0 0 20px;
+    }
+    h3 { font-family: "Google Sans", sans-serif; font-size: 20px; margin: 28px 0 10px; }
+    p { margin: 0 0 14px; }
+    .justify { text-align: justify; hyphens: auto; }
+    figure { margin: 0; }
+    figure img { width: 100%; height: auto; display: block; }
+    figcaption { color: var(--muted); font-size: 15px; margin-top: 10px; text-align: center; }
+    .tldr {
+      background: var(--accent-soft); border-left: 4px solid var(--accent);
+      padding: 16px 20px; border-radius: 6px; font-size: 18px;
+    }
+    .tldr b { color: var(--accent); }
+
+    /* ---------- method cards ---------- */
+    .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 22px; }
+    .card { background: var(--panel); border-radius: 10px; padding: 18px 18px 14px; }
+    .card .step { font-family: "Google Sans", sans-serif; color: var(--accent); font-weight: 700; font-size: 14px; letter-spacing: .05em; }
+    .card h4 { font-family: "Google Sans", sans-serif; margin: 4px 0 8px; font-size: 18px; }
+    .card p { font-size: 15px; margin: 0; }
+    .eq { font-family: "Cambria Math", "STIX Two Math", serif; white-space: nowrap; }
+
+    /* ---------- stats ---------- */
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 6px 0 26px; }
+    .stat { border: 1px solid var(--line); border-radius: 10px; padding: 16px 12px; text-align: center; }
+    .stat .num { font-family: "Google Sans", sans-serif; font-size: 30px; font-weight: 700; color: var(--ours); line-height: 1.1; }
+    .stat .lab { color: var(--muted); font-size: 14px; margin-top: 6px; line-height: 1.4; }
+
+    /* ---------- table ---------- */
+    .table-wrap { overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; font-size: 15px; font-variant-numeric: tabular-nums; }
+    th, td { padding: 7px 10px; text-align: center; white-space: nowrap; }
+    th:first-child, td:first-child { text-align: left; }
+    thead tr:first-child th { border-top: 2px solid var(--ink); }
+    thead tr:last-child th { border-bottom: 1px solid var(--ink); }
+    tbody tr:last-child td { border-bottom: 2px solid var(--ink); }
+    th.group { font-weight: 700; border-bottom: 1px solid var(--line); }
+    tr.ours td { background: var(--accent-soft); font-weight: 700; color: var(--accent); }
+    td.ext { text-decoration: underline; text-underline-offset: 3px; }
+
+    /* ---------- bibtex ---------- */
+    .bib { position: relative; }
+    pre {
+      background: var(--panel); border-radius: 8px; padding: 16px 18px; margin: 0;
+      overflow-x: auto; font-size: 14px; line-height: 1.5;
+    }
+    .copy {
+      position: absolute; top: 10px; right: 10px;
+      border: 1px solid var(--line); background: #fff; border-radius: 6px;
+      font-size: 13px; padding: 4px 10px; cursor: pointer; color: var(--muted);
+    }
+    a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    footer { color: var(--muted); font-size: 14px; text-align: center; padding: 30px 0 40px; border-top: 1px solid var(--line); }
+
+    /* ---------- two-column problem block ---------- */
+    .split { display: grid; grid-template-columns: 1.35fr 1fr; gap: 28px; align-items: center; }
+
+    /* ---------- bar charts ---------- */
+    .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-top: 10px; }
+    .chart { border: 1px solid var(--line); border-radius: 10px; padding: 16px 16px 10px; }
+    .chart h4 { font-family: "Google Sans", sans-serif; font-size: 16px; margin: 0 0 2px; }
+    .chart .sub { color: var(--muted); font-size: 13px; margin-bottom: 10px; }
+    .bar-row { display: grid; grid-template-columns: 150px 1fr 48px; align-items: center; gap: 8px; font-size: 13px; margin: 3px 0; }
+    .bar-row .lbl { text-align: right; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .bar-row .track { position: relative; height: 16px; }
+    .bar-row .bar { position: absolute; top: 2px; height: 12px; border-radius: 3px; background: #b8c8e0; }
+    .bar-row.ours .bar { background: #ff7fa8; }
+    .bar-row.ours .lbl, .bar-row.ours .val { color: var(--ours); font-weight: 700; }
+    .bar-row.bad .bar { background: #e9a3a3; }
+    .bar-row .val { font-variant-numeric: tabular-nums; color: var(--muted); }
+    .ref-line { position: absolute; top: -3px; bottom: -3px; width: 0; border-left: 1.5px dashed #8a939c; }
+    .ref-lab { font-size: 11px; color: #8a939c; position: absolute; top: -16px; transform: translateX(-50%); white-space: nowrap; }
+    .group-lbl { font-size: 11px; color: #8a939c; letter-spacing: .05em; margin: 8px 0 2px 158px; text-transform: uppercase; }
+
+    @media (max-width: 760px) {
+      .split, .chart-grid { grid-template-columns: 1fr; }
+      .bar-row { grid-template-columns: 110px 1fr 42px; }
+      .group-lbl { margin-left: 118px; }
+    }
+
+    @media (max-width: 760px) {
+      body { font-size: 16px; }
+      .cards { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      header.hero { padding-top: 36px; }
+    }
+  </style>
+<header class="hero">
+  <div class="wrap">
+    <div class="venue">ICLR 2027 &middot; under review</div>
+    <h1><span class="name">PhysioWorld</span>: Sign-Constrained Intervention Effects for Domain-Generalizable ICU World Models</h1>
+    <div class="authors"><span>Anonymous authors</span></div>
+    <div class="affils"><span>Paper under double-blind review</span></div>
+
+    <div class="buttons">
+      <a class="btn disabled" aria-disabled="true" title="Coming soon">
+        <svg viewBox="0 0 24 24"><path d="M6 2h9l5 5v15H6V2zm8 1.5V8h4.5L14 3.5zM8 12h8v1.5H8V12zm0 3h8v1.5H8V15zm0 3h5v1.5H8V18z"/></svg>
+        Paper (coming soon)
+      </a>
+      <a class="btn" href="https://anonymous.4open.science/r/physioworld-A2B7/">
+        <svg viewBox="0 0 24 24"><path d="M9.4 16.6 4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0 4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>
+        Code
+      </a>
+      <a class="btn" href="#bibtex">
+        <svg viewBox="0 0 24 24"><path d="M4 4h16v2H4V4zm0 4h10v2H4V8zm0 4h16v2H4v-2zm0 4h10v2H4v-2z"/></svg>
+        BibTeX
+      </a>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <figure>
+      <img src="static/images/world_model.png" alt="PhysioWorld forward pass: the backbone runs once with the recorded doses and once with doses set to zero; the difference is mapped to channel units by G, projected onto the sign cone, and written back into the latent.">
+      <figcaption>PhysioWorld's forward pass. The same predictor runs once under the recorded doses and once with them set to zero; the difference, read in channel units, is projected onto the signs pharmacology states and written back into the latent.</figcaption>
+    </figure>
+    <div class="narrow" style="margin-top:26px">
+      <div class="tldr"><b>TL;DR</b>&ensp;Clinicians dose against severity, so ICU models learn drug effects backwards and break when dosing practice shifts. PhysioWorld isolates each intervention's effect with a second forward pass and constrains only its <em>sign</em> to pharmacology, lowering out-of-distribution error by 8&ndash;12% over the strongest external baseline.</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap narrow">
+    <h2>Abstract</h2>
+    <p class="justify">Predicting how a patient's vital signs will respond to an intervention is a central question in intensive care. World models can do so by learning dynamics as a function of prior actions, so that a trajectory can be unrolled under any chosen treatment course. However, such models tend to be brittle for dosing practices outside of those seen in training data. Clinicians choose drug dosages based on the patient's state, so the association a model learns between dose and outcome runs opposite to the drug's <em>effect</em>, which does not generalize well to out-of-distribution (OOD) dosing practices. However, pharmacological information already provides the effects on vital signs of different drugs, which is invariant to dosing practice distribution shifts. To resolve the OOD sensitivity issues of current ICU world models, we introduce PhysioWorld, a world model that isolates an intervention's effect by evaluating a forward pass twice: once under the recorded doses, and once with those doses set to zero. The difference is then projected onto the set of pharmacologically admissible <em>effect directions</em> stated by a corpus of 70 (drug, channel, sign) rules over 28 drugs, leaving the magnitude, which no source states, to be learned from data. Across five distribution-shift parameters over cohorts from three intensive-care databases, and against forecasters, counterfactual treatment-effect models, invariance objectives and two weaker placements of the same knowledge, PhysioWorld attains the lowest OOD RMSE in every setting, improving on the strongest external baseline by 8&ndash;12%, while matching the in-distribution error of an unconstrained backbone. Reversing the pharmacological effect directions degrades accuracy below the unconstrained backbone, and directions estimated from the training records recover almost no performance gain, indicating that the improvement derives from the content of the pharmacological knowledge rather than from the presence of a constraint.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Why ICU world models fail under dosing shift</h2>
+    <div class="split">
+      <div>
+        <p class="justify">A patient stay is two streams on one clock: irregularly charted vital signs and sparse clinician actions. A world model must predict the next vitals under a treatment course one names.</p>
+        <p class="justify">But each recorded dose is itself a reading of how sick the patient was. A vasopressor appears because blood pressure was falling, so a model that reads the dose as a cause learns that the drug makes pressure fall. Such a dose&ndash;response survives only the dosing regime it was fitted in: under a shift in treatment intensity, pure sequence models fall <em>below</em> simple carry-forward persistence.</p>
+        <p class="justify">The <em>direction</em> of a drug's effect, by contrast, is invariant across that shift: a vasopressor raises blood pressure across patients and care units, and pharmacology states as much before any data is collected.</p>
+      </div>
+      <figure>
+        <img src="static/images/setup_example.png" alt="A real ICU stay: vital-sign traces over time with drug administrations marked below.">
+        <figcaption>A real ICU stay illustrating the task.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Method</h2>
+    <p class="narrow justify">PhysioWorld separates what a forward pass predicts from what pharmacology is able to constrain. The rules, the sign cone they define and the projection onto it are fixed before training; the backbone and the calibration map <span class="eq">G</span> that reads effects in channel units are learned.</p>
+    <div class="cards">
+      <div class="card">
+        <div class="step">STEP 1</div>
+        <h4>Rule corpus</h4>
+        <p>70 (drug, channel, sign) rules over 28 drugs state the direction in which each drug moves each vital sign. Magnitudes are left out, because dose is titrated against the very quantity it changes.</p>
+      </div>
+      <div class="card">
+        <div class="step">STEP 2</div>
+        <h4>A second forward pass</h4>
+        <p>The same predictor, with the same weights and history, runs with the recorded doses and with those doses zeroed. Their difference <span class="eq">&Delta;z = z&#770;(u) &minus; z&#770;(0)</span> is the model's own claim about what the treatment contributed.</p>
+      </div>
+      <div class="card">
+        <div class="step">STEP 3</div>
+        <h4>Sign projection</h4>
+        <p>A closed-form, parameter-free projection clips any component of <span class="eq">G&Delta;z</span> that contradicts the stated sign and writes the correction back into the latent, inside the recurrence. It is provably non-expansive.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Results</h2>
+    <div class="stats">
+      <div class="stat"><div class="num">8&ndash;12%</div><div class="lab">lower OOD RMSE than the strongest external baseline</div></div>
+      <div class="stat"><div class="num">5 / 5</div><div class="lab">shift axes on which PhysioWorld is best</div></div>
+      <div class="stat"><div class="num">86%</div><div class="lab">dose responses in the pharmacological direction (best baseline 77%)</div></div>
+      <div class="stat"><div class="num">&minus;0.058</div><div class="lab">skill with every rule inverted, below no rules at all (0.053)</div></div>
+    </div>
+
+    <h3>Population shift versus intervention-intensity shift</h3>
+    <p>Out-of-distribution RMSE on MIMIC-IV (lower is better, mean over five seeds). Underlined: best external baseline on that axis.</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th class="group" colspan="3">Population shift</th>
+            <th class="group" colspan="2">Intervention-intensity shift</th>
+          </tr>
+          <tr>
+            <th>Method</th><th>Age</th><th>Disease</th><th>Era</th><th>Vasopressor</th><th>Sedative</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Persistence</td><td>10.86</td><td>11.07</td><td>10.86</td><td>10.83</td><td>10.91</td></tr>
+          <tr><td>PatchTST</td><td>9.68</td><td>9.18</td><td>8.92</td><td>12.15</td><td>11.60</td></tr>
+          <tr><td>Chronos-2</td><td class="ext">9.55</td><td class="ext">9.12</td><td class="ext">8.86</td><td>11.70</td><td>11.35</td></tr>
+          <tr><td>Causal Transformer</td><td>9.72</td><td>9.30</td><td>9.05</td><td class="ext">10.45</td><td class="ext">10.28</td></tr>
+          <tr><td>JEPA (backbone)</td><td>9.34</td><td>10.68</td><td>9.46</td><td>11.15</td><td>11.60</td></tr>
+          <tr><td>Clamp</td><td>8.55</td><td>8.40</td><td>8.20</td><td>9.65</td><td>9.38</td></tr>
+          <tr class="ours"><td>PhysioWorld</td><td>8.41</td><td>8.26</td><td>8.15</td><td>9.42</td><td>9.21</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:12px" class="narrow justify">Under a shift in who the patient is, most models degrade moderately. Under a shift in how much drug is given, pure sequence models fall below persistence, while PhysioWorld stays best on every axis at the in-distribution error of its backbone.</p>
+
+    <h3>Across databases</h3>
+    <figure>
+      <img src="static/images/cross_dataset_skill_score.png" alt="Bar chart of out-of-distribution skill against persistence on five cohorts under sedative shift; PhysioWorld is highest on every cohort.">
+      <figcaption>Sedative intensity shift on five cohorts from MIMIC-IV, MIMIC-III and VitalDB. Skill is the fractional RMSE reduction over carry-forward persistence.</figcaption>
+    </figure>
+
+    <h3>Under free-running rollout</h3>
+    <figure class="narrow">
+      <img src="static/images/rollout.png" alt="Autoregressive RMSE against horizon for all methods; PhysioWorld has the lowest error at every horizon and the flattest growth.">
+      <figcaption>Autoregressive RMSE over an eight-step horizon. PhysioWorld has the lowest error at every horizon and keeps nearly all of its skill (0.258 at h=1, 0.247 at h=8).</figcaption>
+    </figure>
+
+    <h3>Does the model use the dose, and in the right direction?</h3>
+    <p class="narrow justify">Perturbing the doses at test time on the intervention-intensity slices, we count how often the predicted change has the sign pharmacology implies. This is measured on the decoded output, where the operator gives no guarantee, so it is not satisfied by construction.</p>
+    <h3>The gain comes from the pharmacology, not the constraint</h3>
+    <p class="narrow justify">With the operator held fixed, skill falls monotonically as more of the stated directions are inverted, from 0.198 with the correct corpus to &minus;0.058 when every direction is reversed, below the unconstrained backbone. Directions mined from the training records agree with pharmacology on only 48% of the pairs, no better than chance, and recover almost none of the gain. A wrong corpus is worse than none.</p>
+
+    <div class="chart-grid">
+      <div class="chart">
+        <h4>Dose-direction agreement</h4>
+        <div class="sub">Share of eligible channel-steps whose change has the pharmacological sign when doses are zeroed (%)</div>
+        <div id="chart-agree"></div>
+      </div>
+      <div class="chart">
+        <h4>Knowledge ablation</h4>
+        <div class="sub">OOD skill of the same operator with different rule corpora</div>
+        <div id="chart-corpus"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="bibtex">
+  <div class="wrap narrow">
+    <h2>BibTeX</h2>
+    <div class="bib">
+      <button class="copy" type="button" onclick="copyBib(this)">Copy</button>
+<pre id="bib-text">@article{anonymous2026physioworld,
+  title   = {Sign-Constrained Intervention Effects for Domain-Generalizable ICU World Models},
+  author  = {Anonymous},
+  year    = {2026}
+}</pre>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">&copy; 2026 Anonymous authors.</div>
+</footer>
+
+<script>
+  /* ---------------- bar charts (numbers from the paper's Tables 3 and 4) ---------------- */
+  function barChart(el, rows, lo, hi, opts) {
+    const span = hi - lo, pos = v => (v - lo) / span * 100;
+    const zero = pos(opts.base !== undefined ? opts.base : 0);
+    let html = '';
+    rows.forEach(r => {
+      if (r.group) { html += `<div class="group-lbl">${r.group}</div>`; return; }
+      const a = Math.min(zero, pos(r.v)), w = Math.abs(pos(r.v) - zero);
+      const cls = r.ours ? 'ours' : (r.bad ? 'bad' : '');
+      html += `<div class="bar-row ${cls}"><div class="lbl" title="${r.n}">${r.n}</div>` +
+              `<div class="track"><div class="bar" style="left:${a}%;width:${w}%"></div>` +
+              (opts.ref !== undefined ? `<div class="ref-line" style="left:${pos(opts.ref.v)}%"></div>` : '') +
+              `</div><div class="val">${opts.fmt(r.v)}</div></div>`;
+    });
+    el.innerHTML = html;
+    if (opts.ref !== undefined) {
+      const first = el.querySelector('.track');
+      if (first) first.insertAdjacentHTML('beforeend', `<div class="ref-lab" style="left:${pos(opts.ref.v)}%">${opts.ref.label}</div>`);
+    }
+  }
+
+  barChart(document.getElementById('chart-agree'), [
+    {n: 'PatchTST', v: 36}, {n: 'GraFITi', v: 39}, {n: 'Chronos-2', v: 41},
+    {n: 'JEPA', v: 46}, {n: 'IRM', v: 47}, {n: 'CORAL', v: 51},
+    {n: 'Soft constraint', v: 55}, {n: 'CRN', v: 58}, {n: 'IPTW', v: 61},
+    {n: 'Causal Transformer', v: 63}, {n: 'Clamp', v: 77}, {n: 'PhysioWorld', v: 86, ours: true}
+  ], 0, 100, {fmt: v => v + '%', ref: {v: 50, label: 'chance'}});
+
+  barChart(document.getElementById('chart-corpus'), [
+    {n: 'PhysioWorld (70 rules)', v: 0.198, ours: true},
+    {group: 'how much is stated'},
+    {n: '35 rules', v: 0.152}, {n: '17 rules', v: 0.107},
+    {group: 'how much of it is right'},
+    {n: '25% inverted', v: 0.121}, {n: '50% inverted', v: 0.024}, {n: 'all inverted', v: -0.058, bad: true},
+    {group: 'where it comes from'},
+    {n: 'drug labels permuted', v: 0.066}, {n: 'mined from records', v: 0.005}, {n: 'signs + magnitude', v: 0.093},
+    {group: 'baseline'},
+    {n: 'no rules (JEPA)', v: 0.053}
+  ], -0.08, 0.22, {fmt: v => (v < 0 ? '−' : '') + Math.abs(v).toFixed(3), ref: {v: 0.053, label: 'no rules'}});
+
+
+
+  function copyBib(btn) {
+    const text = document.getElementById('bib-text').innerText;
+    const done = () => { btn.textContent = 'Copied'; setTimeout(() => { btn.textContent = 'Copy'; }, 1500); };
+    const select = () => {
+      const r = document.createRange(); r.selectNodeContents(document.getElementById('bib-text'));
+      const s = window.getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = 'Selected';
+    };
+    try {
+      if (navigator.clipboard) navigator.clipboard.writeText(text).then(done, select); else select();
+    } catch (e) { select(); }
+  }
+</script>
